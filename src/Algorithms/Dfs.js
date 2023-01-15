@@ -9,7 +9,7 @@ function dfsHelper(startNode, currPath) {
     return;
   }
   for (let i in startNode.neighbours) {
-    if (!startNode.neighbours[i].isVis) {
+    if (!startNode.neighbours[i].isVis && !found) {
       startNode.neighbours[i].isVis = true;
       visitedInOrder.push(startNode);
       currPath.push(startNode.neighbours[i]);

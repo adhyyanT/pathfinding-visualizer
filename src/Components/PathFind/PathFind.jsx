@@ -3,12 +3,12 @@ import './PathFind.css';
 import Node from '../Node/Node';
 import dfs from '../../Algorithms/Dfs';
 
-const rows = 3;
-const cols = 3;
-const start_row = 2,
-  start_col = 2,
-  end_row = 0,
-  end_col = 0;
+const rows = 15;
+const cols = 35;
+const start_row = 0,
+  start_col = 0,
+  end_row = 9,
+  end_col = 25;
 
 const PathFind = () => {
   //Main grid that holds object structure
@@ -83,9 +83,34 @@ const PathFind = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(path);
-  console.log(visitedNodes);
-  console.log(pathFound);
+  const visualizeShortestPath = (path) => {
+    for (let i = 0; i < path.length; i++) {
+      setTimeout(() => {
+        document.getElementById(
+          `cell-${path[i].row}-${path[i].col}`
+        ).className = 'node node-shortest-path';
+      }, 10 * i);
+    }
+  };
+
+  const handleVisualizeAlgo = () => {
+    console.log(path);
+    console.log(visitedNodes);
+    console.log(pathFound);
+    for (let i = 0; i <= visitedNodes.length; i++) {
+      if (i === visitedNodes.length) {
+        setTimeout(() => {
+          visualizeShortestPath(path);
+        }, 20 * i);
+      } else {
+        setTimeout(() => {
+          document.getElementById(
+            `cell-${visitedNodes[i].row}-${visitedNodes[i].col}`
+          ).className = 'node node-visited';
+        }, 20 * i);
+      }
+    }
+  };
 
   return (
     <div className='container'>
@@ -107,6 +132,7 @@ const PathFind = () => {
           </div>
         ))}
       </div>
+      <button onClick={handleVisualizeAlgo}>Visualize DFS</button>
     </div>
   );
 };
