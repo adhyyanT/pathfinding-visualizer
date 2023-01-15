@@ -26,7 +26,7 @@ const PathFind = () => {
   const isValid = (i, j) => {
     return i >= 0 && i < rows && j >= 0 && j < cols;
   };
-
+  let tempGrid = [];
   const populateNeighbours = (i, j, grid) => {
     const x = [-1, 0, 1, 0];
     const y = [0, 1, 0, -1];
@@ -43,7 +43,6 @@ const PathFind = () => {
 
   //Run this before component render to init grid
   const initGrid = () => {
-    let tempGrid = [];
     for (let i = 0; i < rows; i++) {
       let currNodes = [];
       for (let j = 0; j < cols; j++) {
@@ -112,6 +111,28 @@ const PathFind = () => {
     }
   };
 
+  const handleReset = () => {
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        if (i === start_row && j === start_col) {
+          // console.log(`cell-${grid[i][j].row}-${grid[i][j].col}`);
+          document.getElementById(
+            `cell-${grid[i][j].row}-${grid[i][j].col}`
+          ).className = 'node node-start';
+        } else if (i === end_row && j === end_col) {
+          document.getElementById(
+            `cell-${grid[i][j].row}-${grid[i][j].col}`
+          ).className = 'node node-end';
+        } else {
+          document.getElementById(
+            `cell-${grid[i][j].row}-${grid[i][j].col}`
+          ).className = 'node';
+        }
+      }
+    }
+    // setGrid(tempGrid);
+  };
+
   return (
     <div className='container'>
       <div>
@@ -133,6 +154,7 @@ const PathFind = () => {
         ))}
       </div>
       <button onClick={handleVisualizeAlgo}>Visualize DFS</button>
+      <button onClick={handleReset}> Reset Grid</button>
     </div>
   );
 };
