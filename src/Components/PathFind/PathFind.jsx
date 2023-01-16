@@ -7,8 +7,8 @@ const rows = 15;
 const cols = 35;
 const start_row = 0,
   start_col = 0,
-  end_row = 9,
-  end_col = 25;
+  end_row = 7,
+  end_col = 24;
 
 const PathFind = () => {
   //Main grid that holds object structure
@@ -23,10 +23,18 @@ const PathFind = () => {
   // Is it possible to traverse to the end node ?
   const [pathFound, setPathFound] = useState(false);
 
+  // Walls
+  const [mouseIsPressed, setMouseIsPressed] = useState(false);
+
+  // Algo select dropdown
+  const [algoSelect, setAlgoSelect] = useState('DFS');
+
+  let tempGrid = [];
+
   const isValid = (i, j) => {
     return i >= 0 && i < rows && j >= 0 && j < cols;
   };
-  let tempGrid = [];
+
   const populateNeighbours = (i, j, grid) => {
     const x = [-1, 0, 1, 0];
     const y = [0, 1, 0, -1];
@@ -43,6 +51,7 @@ const PathFind = () => {
 
   //Run this before component render to init grid
   const initGrid = () => {
+    console.log('yes');
     for (let i = 0; i < rows; i++) {
       let currNodes = [];
       for (let j = 0; j < cols; j++) {
@@ -68,19 +77,8 @@ const PathFind = () => {
         tempGrid[i][j].neighbours = populateNeighbours(i, j, tempGrid);
       }
     }
-
     setGrid(tempGrid);
-
-    let path = dfs(tempGrid[start_row][start_col]);
-    setPath(path.path);
-    setVisitedNodes(path.visitedInOrder);
-    setPathFound(path.found);
   };
-
-  useEffect(() => {
-    initGrid();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const visualizeShortestPath = (path) => {
     for (let i = 0; i < path.length; i++) {
@@ -93,18 +91,18 @@ const PathFind = () => {
   };
 
   const handleVisualizeAlgo = () => {
-    console.log(path);
-    console.log(visitedNodes);
-    console.log(pathFound);
-    for (let i = 0; i <= visitedNodes.length; i++) {
-      if (i === visitedNodes.length) {
+    console.log(grid[3][3].wall);
+    let { visitedInOrder, pathFound, path } = dfs(grid[start_row][start_col]);
+    console.log(visitedInOrder);
+    for (let i = 0; i <= visitedInOrder.length; i++) {
+      if (i === visitedInOrder.length) {
         setTimeout(() => {
           visualizeShortestPath(path);
         }, 20 * i);
       } else {
         setTimeout(() => {
           document.getElementById(
-            `cell-${visitedNodes[i].row}-${visitedNodes[i].col}`
+            `cell-${visitedInOrder[i].row}-${visitedInOrder[i].col}`
           ).className = 'node node-visited';
         }, 20 * i);
       }
@@ -112,6 +110,7 @@ const PathFind = () => {
   };
 
   const handleReset = () => {
+    let tempGrid2 = grid;
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
         if (i === start_row && j === start_col) {
@@ -128,11 +127,70 @@ const PathFind = () => {
             `cell-${grid[i][j].row}-${grid[i][j].col}`
           ).className = 'node';
         }
+        tempGrid2[i][j].wall = false;
+        tempGrid2[i][j].isVis = false;
       }
     }
-    // setGrid(tempGrid);
+    setPath([]);
+    setPathFound(false);
+    setVisitedNodes([]);
+    setGrid(tempGrid2);
   };
 
+  // run on mouseup
+  const runAlgo = () => {
+    console.log(grid);
+    let path = dfs(grid[start_row][start_col]);
+    setPath(path.path);
+    setVisitedNodes(path.visitedInOrder);
+    setPathFound(path.found);
+  };
+
+  const onMouseDown = (row, col) => {
+    tempGrid = grid;
+    tempGrid[row][col].wall = !tempGrid[row][col].wall;
+    if (tempGrid[row][col].wall) {
+      document.getElementById(
+        `cell-${grid[row][col].row}-${grid[row][col].col}`
+      ).className = 'node node-wall';
+    } else {
+      document.getElementById(
+        `cell-${grid[row][col].row}-${grid[row][col].col}`
+      ).className = 'node';
+    }
+    setGrid(tempGrid);
+    setMouseIsPressed(true);
+  };
+  const onMouseUp = (row, col) => {
+    setMouseIsPressed(false);
+  };
+  const onMouseEnter = (row, col) => {
+    if (mouseIsPressed) {
+      tempGrid = grid;
+      tempGrid[row][col].wall = !tempGrid[row][col].wall;
+      if (tempGrid[row][col].wall) {
+        document.getElementById(
+          `cell-${grid[row][col].row}-${grid[row][col].col}`
+        ).className = 'node node-wall';
+      } else {
+        document.getElementById(
+          `cell-${grid[row][col].row}-${grid[row][col].col}`
+        ).className = 'node';
+      }
+      setGrid(tempGrid);
+    }
+  };
+
+  const handleAlgoChange = (event) => {
+    let algo = event.target.value;
+    setAlgoSelect(algo);
+  };
+
+  useEffect(() => {
+    initGrid();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className='container'>
       <div>
@@ -147,6 +205,9 @@ const PathFind = () => {
                   isEnd={isEnd}
                   row={row}
                   col={col}
+                  passonMouseDown={onMouseDown}
+                  passonMouseUp={onMouseUp}
+                  passonMouseEnter={onMouseEnter}
                 />
               );
             })}
@@ -155,6 +216,10 @@ const PathFind = () => {
       </div>
       <button onClick={handleVisualizeAlgo}>Visualize DFS</button>
       <button onClick={handleReset}> Reset Grid</button>
+      <select onChange={handleAlgoChange}>
+        <option value='none'></option>
+        <option value='DFS'>DFS</option>
+      </select>
     </div>
   );
 };
