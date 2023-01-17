@@ -3,6 +3,7 @@ import './PathFind.css';
 import Node from '../Node/Node';
 import dfs from '../../Algorithms/Dfs';
 import Bfs from '../../Algorithms/Bfs';
+import multiSrcBfs from '../../Algorithms/Multi-src-bfs';
 
 const rows = 15;
 const cols = 35;
@@ -65,6 +66,7 @@ const PathFind = () => {
           weight: 1,
           wall: false,
           neighbours: [],
+          src: -1,
         };
       }
       tempGrid.push(currNodes);
@@ -88,10 +90,15 @@ const PathFind = () => {
         ).className = 'node node-shortest-path';
       }, 10 * i);
     }
+    setTimeout(() => {
+      document.getElementById(`cell-${start_row}-${start_col}`).className =
+        'node node-start';
+      document.getElementById(`cell-${end_row}-${end_col}`).className =
+        'node node-end';
+    }, 1000);
   };
 
   const handleVisualizeAlgo = () => {
-    // console.log(grid[3][3].wall);
     let visitedInOrder, pathFound, path;
     switch (algoSelect) {
       case 'DFS':
@@ -103,17 +110,28 @@ const PathFind = () => {
         break;
       case 'BFS':
         let bfsObj;
-        // console.log(grid);
         bfsObj = Bfs(grid[start_row][start_col]);
-        // console.log(bfsObj);
         visitedInOrder = bfsObj.visitedInOrder;
         pathFound = bfsObj.pathFound;
         path = bfsObj.path;
         break;
+      case 'Multi-Source-BFS':
+        let multiSrc;
+        multiSrc = multiSrcBfs(
+          grid[start_row][start_col],
+          grid[end_row][end_col]
+        );
+        visitedInOrder = multiSrc.visitedInOrder;
+        pathFound = multiSrc.pathFound;
+        path = multiSrc.path;
+        break;
       default:
         break;
     }
-    console.log(path);
+    // path.shift();
+    // path.unshift();
+    // visitedInOrder.shift();
+    // visitedInOrder.unshift();
     for (let i = 0; i <= visitedInOrder.length; i++) {
       if (i === visitedInOrder.length) {
         setTimeout(() => {
@@ -134,7 +152,6 @@ const PathFind = () => {
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
         if (i === start_row && j === start_col) {
-          // console.log(`cell-${grid[i][j].row}-${grid[i][j].col}`);
           document.getElementById(
             `cell-${grid[i][j].row}-${grid[i][j].col}`
           ).className = 'node node-start';
@@ -149,6 +166,7 @@ const PathFind = () => {
         }
         tempGrid2[i][j].wall = false;
         tempGrid2[i][j].isVis = false;
+        tempGrid2[i][j].src = -1;
       }
     }
     setPath([]);
@@ -159,7 +177,6 @@ const PathFind = () => {
 
   // run on mouseup
   const runAlgo = () => {
-    console.log(grid);
     let path = dfs(grid[start_row][start_col]);
     setPath(path.path);
     setVisitedNodes(path.visitedInOrder);
@@ -240,6 +257,7 @@ const PathFind = () => {
         <option value='none'></option>
         <option value='DFS'>DFS</option>
         <option value='BFS'>BFS</option>
+        <option value='Multi-Source-BFS'>Multi Source BFS</option>
       </select>
     </div>
   );
