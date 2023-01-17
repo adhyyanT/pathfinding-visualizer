@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import './PathFind.css';
 import Node from '../Node/Node';
 import dfs from '../../Algorithms/Dfs';
+import Bfs from '../../Algorithms/Bfs';
 
 const rows = 15;
 const cols = 35;
-const start_row = 0,
-  start_col = 0,
+const start_row = 10,
+  start_col = 10,
   end_row = 7,
   end_col = 24;
 
@@ -51,7 +52,6 @@ const PathFind = () => {
 
   //Run this before component render to init grid
   const initGrid = () => {
-    console.log('yes');
     for (let i = 0; i < rows; i++) {
       let currNodes = [];
       for (let j = 0; j < cols; j++) {
@@ -91,9 +91,29 @@ const PathFind = () => {
   };
 
   const handleVisualizeAlgo = () => {
-    console.log(grid[3][3].wall);
-    let { visitedInOrder, pathFound, path } = dfs(grid[start_row][start_col]);
-    console.log(visitedInOrder);
+    // console.log(grid[3][3].wall);
+    let visitedInOrder, pathFound, path;
+    switch (algoSelect) {
+      case 'DFS':
+        let dfsObj;
+        dfsObj = dfs(grid[start_row][start_col]);
+        visitedInOrder = dfsObj.visitedInOrder;
+        pathFound = dfsObj.pathFound;
+        path = dfsObj.path;
+        break;
+      case 'BFS':
+        let bfsObj;
+        // console.log(grid);
+        bfsObj = Bfs(grid[start_row][start_col]);
+        // console.log(bfsObj);
+        visitedInOrder = bfsObj.visitedInOrder;
+        pathFound = bfsObj.pathFound;
+        path = bfsObj.path;
+        break;
+      default:
+        break;
+    }
+    console.log(path);
     for (let i = 0; i <= visitedInOrder.length; i++) {
       if (i === visitedInOrder.length) {
         setTimeout(() => {
@@ -219,6 +239,7 @@ const PathFind = () => {
       <select onChange={handleAlgoChange}>
         <option value='none'></option>
         <option value='DFS'>DFS</option>
+        <option value='BFS'>BFS</option>
       </select>
     </div>
   );

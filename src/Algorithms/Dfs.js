@@ -15,13 +15,6 @@ const dfs = (startNode) => {
       return;
     }
     for (let i in startNode.neighbours) {
-      console.log(
-        startNode.neighbours[i].row +
-          ' ' +
-          startNode.neighbours[i].col +
-          ' ' +
-          startNode.neighbours[i].wall
-      );
       if (
         !startNode.neighbours[i].isVis &&
         !found &&
