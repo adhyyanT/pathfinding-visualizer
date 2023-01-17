@@ -84,18 +84,24 @@ const PathFind = () => {
 
   const visualizeShortestPath = (path) => {
     for (let i = 0; i < path.length; i++) {
+      if (
+        (path[i].row === start_row && path[i].col === start_col) ||
+        (path[i].col === end_col && path[i].row === end_row)
+      ) {
+        continue;
+      }
       setTimeout(() => {
         document.getElementById(
           `cell-${path[i].row}-${path[i].col}`
         ).className = 'node node-shortest-path';
       }, 10 * i);
     }
-    setTimeout(() => {
-      document.getElementById(`cell-${start_row}-${start_col}`).className =
-        'node node-start';
-      document.getElementById(`cell-${end_row}-${end_col}`).className =
-        'node node-end';
-    }, 1000);
+    // setTimeout(() => {
+    //   document.getElementById(`cell-${start_row}-${start_col}`).className =
+    //     'node node-start';
+    //   document.getElementById(`cell-${end_row}-${end_col}`).className =
+    //     'node node-end';
+    // }, 1000);
   };
 
   const handleVisualizeAlgo = () => {
@@ -137,6 +143,12 @@ const PathFind = () => {
         setTimeout(() => {
           visualizeShortestPath(path);
         }, 20 * i);
+      } else if (
+        (visitedInOrder[i].row === start_row &&
+          visitedInOrder[i].col === start_col) ||
+        (visitedInOrder[i].col === end_col && visitedInOrder[i].row === end_row)
+      ) {
+        continue;
       } else {
         setTimeout(() => {
           document.getElementById(
