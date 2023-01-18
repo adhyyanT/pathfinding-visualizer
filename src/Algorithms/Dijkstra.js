@@ -5,7 +5,7 @@ const dijkstra = (startNode) => {
   let visitedInOrder = []; // store every node in order of their function call
   let path = []; // stores the path to the end node
   const compareCars = (a, b) => {
-    return a.startNode.weight - b.startNode.weight >= 0 ? 1 : -1;
+    return a.startNode.dist - b.startNode.dist >= 0 ? 1 : -1;
   };
   let minHeap = new Heap(compareCars);
   minHeap.insert({
@@ -17,20 +17,20 @@ const dijkstra = (startNode) => {
     for (let i in currNode.neighbours) {
       if (currNode.neighbours[i].isEnd) {
         path = [...currPath, currNode.neighbours[i]];
-        found = true;
+        console.log(currNode.weight);
         return { found, visitedInOrder, path };
       }
-      if (!currNode.neighbours[i].isVis && !currNode.neighbours[i].wall) {
-        currNode.neighbours[i].isVis = true;
-        visitedInOrder.push(currNode.neighbours[i]);
-        currNode.neighbours[i].weight = Math.min(
-          currNode.neighbours[i].weight,
-          currNode.weight + 1
-        );
-        minHeap.push({
-          startNode: currNode.neighbours[i],
-          currPath: [...currPath, currNode.neighbours[i]],
-        });
+      if (!currNode.neighbours[i].wall) {
+        let t = currNode.dist + currNode.neighbours[i].weight;
+        console.log(t);
+        if (t < currNode.neighbours[i].dist) {
+          visitedInOrder.push(currNode.neighbours[i]);
+          currNode.neighbours[i].dist = t;
+          minHeap.push({
+            startNode: currNode.neighbours[i],
+            currPath: [...currPath, currNode.neighbours[i]],
+          });
+        }
       }
     }
   }

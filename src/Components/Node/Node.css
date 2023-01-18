@@ -50,7 +50,9 @@
 .node-wall {
   background-color: rgb(12, 53, 71);
 }
-
+.node-weight {
+  background-color: rgb(189, 255, 7);
+}
 .node-shortest-path {
   animation-name: shortestPath;
   animation-duration: 1.5s;

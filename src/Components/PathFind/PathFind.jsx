@@ -31,6 +31,9 @@ const PathFind = () => {
   const [changingStart, setChangingStart] = useState(false);
   const [changingEnd, setChangingEnd] = useState(false);
 
+  // Add weights of 100
+  const [isWeight, setIsWeight] = useState(false);
+
   let tempGrid = [];
 
   const isValid = (i, j) => {
@@ -62,7 +65,8 @@ const PathFind = () => {
           isVis: false,
           row: i,
           col: j,
-          weight: i === start_row && j === start_col ? 0 : Infinity,
+          weight: 1,
+          dist: i === start_row && j === start_col ? 0 : Infinity,
           wall: false,
           neighbours: [],
           src: -1,
@@ -99,7 +103,7 @@ const PathFind = () => {
 
   const handleVisualizeAlgo = () => {
     let visitedInOrder, pathFound, path;
-
+    // console.log(grid[6][24].weight);
     switch (algoSelect) {
       case 'DFS':
         let dfsObj;
@@ -171,12 +175,14 @@ const PathFind = () => {
             `cell-${grid[i][j].row}-${grid[i][j].col}`
           ).className = 'node node-end';
           tempGrid2[i][j].isEnd = true;
-          tempGrid2[i][j].weight = Infinity;
+          tempGrid2[i][j].weight = 1;
+          tempGrid2[i][j].dist = Infinity;
         } else {
           document.getElementById(
             `cell-${grid[i][j].row}-${grid[i][j].col}`
           ).className = 'node';
-          tempGrid2[i][j].weight = Infinity;
+          tempGrid2[i][j].weight = 1;
+          tempGrid2[i][j].dist = Infinity;
         }
         tempGrid2[i][j].wall = false;
         tempGrid2[i][j].isVis = false;
@@ -186,7 +192,7 @@ const PathFind = () => {
   };
 
   const onMouseDown = (row, col) => {
-    if (!isWall) {
+    if (!isWall && !isWeight) {
       if (
         document
           .getElementById(`cell-${grid[row][col].row}-${grid[row][col].col}`)
@@ -202,14 +208,35 @@ const PathFind = () => {
         setChangingEnd(true);
         setMouseIsPressed(true);
       }
-    } else {
+    } else if (isWall) {
       tempGrid = grid;
-      if (grid[row][col].isStart || grid[row][col].isEnd) return;
+      if (
+        grid[row][col].isStart ||
+        grid[row][col].isEnd ||
+        grid[row][col].weight === 100
+      )
+        return;
       tempGrid[row][col].wall = !tempGrid[row][col].wall;
       if (tempGrid[row][col].wall) {
         document.getElementById(
           `cell-${grid[row][col].row}-${grid[row][col].col}`
         ).className = 'node node-wall';
+      } else {
+        document.getElementById(
+          `cell-${grid[row][col].row}-${grid[row][col].col}`
+        ).className = 'node';
+      }
+      setGrid(tempGrid);
+      setMouseIsPressed(true);
+    } else {
+      tempGrid = grid;
+      if (grid[row][col].isStart || grid[row][col].isEnd || grid[row][col].wall)
+        return;
+      tempGrid[row][col].weight = tempGrid[row][col].weight === 100 ? 1 : 100;
+      if (tempGrid[row][col].weight === 100) {
+        document.getElementById(
+          `cell-${grid[row][col].row}-${grid[row][col].col}`
+        ).className = 'node node-weight';
       } else {
         document.getElementById(
           `cell-${grid[row][col].row}-${grid[row][col].col}`
@@ -239,7 +266,7 @@ const PathFind = () => {
   const onMouseEnter = (row, col) => {
     // if ()
     if (mouseIsPressed) {
-      if (!isWall) {
+      if (!isWall && !isWeight) {
         if (changingStart) {
           document.getElementById(
             `cell-${grid[row][col].row}-${grid[row][col].col}`
@@ -250,14 +277,38 @@ const PathFind = () => {
             `cell-${grid[row][col].row}-${grid[row][col].col}`
           ).className = 'node node-end';
         }
-      } else {
+      } else if (isWall) {
         tempGrid = grid;
-        if (grid[row][col].isStart || grid[row][col].isEnd) return;
+        if (
+          grid[row][col].isStart ||
+          grid[row][col].isEnd ||
+          grid[row][col].weight === 100
+        )
+          return;
         tempGrid[row][col].wall = !tempGrid[row][col].wall;
         if (tempGrid[row][col].wall) {
           document.getElementById(
             `cell-${grid[row][col].row}-${grid[row][col].col}`
           ).className = 'node node-wall';
+        } else {
+          document.getElementById(
+            `cell-${grid[row][col].row}-${grid[row][col].col}`
+          ).className = 'node';
+        }
+        setGrid(tempGrid);
+      } else {
+        tempGrid = grid;
+        if (
+          grid[row][col].isStart ||
+          grid[row][col].isEnd ||
+          grid[row][col].wall
+        )
+          return;
+        tempGrid[row][col].weight = tempGrid[row][col].weight === 100 ? 1 : 100;
+        if (tempGrid[row][col].weight === 100) {
+          document.getElementById(
+            `cell-${grid[row][col].row}-${grid[row][col].col}`
+          ).className = 'node node-weight';
         } else {
           document.getElementById(
             `cell-${grid[row][col].row}-${grid[row][col].col}`
@@ -293,6 +344,12 @@ const PathFind = () => {
 
   const handleSetWalls = () => {
     setIsWall(!isWall);
+    setIsWeight(false);
+  };
+
+  const handleWeights = () => {
+    setIsWeight(!isWeight);
+    setIsWall(false);
   };
 
   useEffect(() => {
@@ -334,6 +391,7 @@ const PathFind = () => {
         <option value='Dijkstra'>Dijkstra</option>
       </select>
       <button onClick={handleSetWalls}>Set Walls</button>
+      <button onClick={handleWeights}>Add Weights</button>
     </div>
   );
 };
