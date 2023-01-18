@@ -4,7 +4,7 @@ import Node from '../Node/Node';
 import dfs from '../../Algorithms/Dfs';
 import Bfs from '../../Algorithms/Bfs';
 import multiSrcBfs from '../../Algorithms/Multi-src-bfs';
-
+import dijkstra from '../../Algorithms/Dijkstra';
 const rows = 15;
 const cols = 35;
 // const start_row = 10,
@@ -15,15 +15,6 @@ const cols = 35;
 const PathFind = () => {
   //Main grid that holds object structure
   const [grid, setGrid] = useState([]);
-
-  // All the visited Node in order of their function call
-  // const [visitedNodes, setVisitedNodes] = useState([]);
-
-  // // shortest path according to the algorithm
-  // const [path, setPath] = useState([]);
-
-  // // Is it possible to traverse to the end node ?
-  // const [pathFound, setPathFound] = useState(false);
 
   // Walls
   const [mouseIsPressed, setMouseIsPressed] = useState(false);
@@ -71,8 +62,7 @@ const PathFind = () => {
           isVis: false,
           row: i,
           col: j,
-          //   id: i + ' ' + j,
-          weight: 1,
+          weight: i === start_row && j === start_col ? 0 : Infinity,
           wall: false,
           neighbours: [],
           src: -1,
@@ -105,12 +95,6 @@ const PathFind = () => {
         ).className = 'node node-shortest-path';
       }, 10 * i);
     }
-    // setTimeout(() => {
-    //   document.getElementById(`cell-${start_row}-${start_col}`).className =
-    //     'node node-start';
-    //   document.getElementById(`cell-${end_row}-${end_col}`).className =
-    //     'node node-end';
-    // }, 1000);
   };
 
   const handleVisualizeAlgo = () => {
@@ -140,13 +124,17 @@ const PathFind = () => {
         pathFound = multiSrc.pathFound;
         path = multiSrc.path;
         break;
+      case 'Dijkstra':
+        let dij;
+        dij = dijkstra(grid[start_row][start_col]);
+        visitedInOrder = dij.visitedInOrder;
+        pathFound = dij.pathFound;
+        path = dij.path;
+        break;
       default:
         break;
     }
-    // path.shift();
-    // path.unshift();
-    // visitedInOrder.shift();
-    // visitedInOrder.unshift();
+
     for (let i = 0; i <= visitedInOrder.length; i++) {
       if (i === visitedInOrder.length) {
         setTimeout(() => {
@@ -333,6 +321,7 @@ const PathFind = () => {
         <option value='DFS'>DFS</option>
         <option value='BFS'>BFS</option>
         <option value='Multi-Source-BFS'>Multi Source BFS</option>
+        <option value='Dijkstra'>Dijkstra</option>
       </select>
       <button onClick={handleSetWalls}>Set Walls</button>
     </div>
