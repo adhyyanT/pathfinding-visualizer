@@ -9,6 +9,7 @@ const Node = ({
   passonMouseDown,
   passonMouseUp,
   passonMouseEnter,
+  passonMouseLeave,
 }) => {
   // console.log(isEnd);
   let cssClass = '';
@@ -25,6 +26,7 @@ const Node = ({
       onMouseDown={() => passonMouseDown(row, col)}
       onMouseEnter={() => passonMouseEnter(row, col)}
       onMouseUp={() => passonMouseUp(row, col)}
+      onMouseLeave={() => passonMouseLeave(row, col)}
       // onClick={() => passonMouseClick(row, col)}
     ></div>
   );

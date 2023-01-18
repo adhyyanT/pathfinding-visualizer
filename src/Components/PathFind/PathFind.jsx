@@ -7,29 +7,38 @@ import multiSrcBfs from '../../Algorithms/Multi-src-bfs';
 
 const rows = 15;
 const cols = 35;
-const start_row = 10,
-  start_col = 10,
-  end_row = 7,
-  end_col = 24;
+// const start_row = 10,
+//   start_col = 10,
+//   end_row = 7,
+//   end_col = 24;
 
 const PathFind = () => {
   //Main grid that holds object structure
   const [grid, setGrid] = useState([]);
 
   // All the visited Node in order of their function call
-  const [visitedNodes, setVisitedNodes] = useState([]);
+  // const [visitedNodes, setVisitedNodes] = useState([]);
 
-  // shortest path according to the algorithm
-  const [path, setPath] = useState([]);
+  // // shortest path according to the algorithm
+  // const [path, setPath] = useState([]);
 
-  // Is it possible to traverse to the end node ?
-  const [pathFound, setPathFound] = useState(false);
+  // // Is it possible to traverse to the end node ?
+  // const [pathFound, setPathFound] = useState(false);
 
   // Walls
   const [mouseIsPressed, setMouseIsPressed] = useState(false);
 
   // Algo select dropdown
   const [algoSelect, setAlgoSelect] = useState('DFS');
+
+  // Add wall state for button "Add walls" and store startnode and endnode
+  const [isWall, setIsWall] = useState(false);
+  const [start_row, setStart_row] = useState(10);
+  const [start_col, setStart_col] = useState(10);
+  const [end_row, setEnd_row] = useState(7);
+  const [end_col, setEnd_col] = useState(24);
+  const [changingStart, setChangingStart] = useState(false);
+  const [changingEnd, setChangingEnd] = useState(false);
 
   let tempGrid = [];
 
@@ -181,40 +190,26 @@ const PathFind = () => {
         tempGrid2[i][j].src = -1;
       }
     }
-    setPath([]);
-    setPathFound(false);
-    setVisitedNodes([]);
-    setGrid(tempGrid2);
-  };
-
-  // run on mouseup
-  const runAlgo = () => {
-    let path = dfs(grid[start_row][start_col]);
-    setPath(path.path);
-    setVisitedNodes(path.visitedInOrder);
-    setPathFound(path.found);
   };
 
   const onMouseDown = (row, col) => {
-    tempGrid = grid;
-    tempGrid[row][col].wall = !tempGrid[row][col].wall;
-    if (tempGrid[row][col].wall) {
-      document.getElementById(
-        `cell-${grid[row][col].row}-${grid[row][col].col}`
-      ).className = 'node node-wall';
+    if (!isWall) {
+      if (
+        document
+          .getElementById(`cell-${grid[row][col].row}-${grid[row][col].col}`)
+          .className.localeCompare('node node-start') === 0
+      ) {
+        setChangingStart(true);
+        setMouseIsPressed(true);
+      } else if (
+        document
+          .getElementById(`cell-${grid[row][col].row}-${grid[row][col].col}`)
+          .className.localeCompare('node node-end') === 0
+      ) {
+        setChangingEnd(true);
+        setMouseIsPressed(true);
+      }
     } else {
-      document.getElementById(
-        `cell-${grid[row][col].row}-${grid[row][col].col}`
-      ).className = 'node';
-    }
-    setGrid(tempGrid);
-    setMouseIsPressed(true);
-  };
-  const onMouseUp = (row, col) => {
-    setMouseIsPressed(false);
-  };
-  const onMouseEnter = (row, col) => {
-    if (mouseIsPressed) {
       tempGrid = grid;
       tempGrid[row][col].wall = !tempGrid[row][col].wall;
       if (tempGrid[row][col].wall) {
@@ -227,12 +222,79 @@ const PathFind = () => {
         ).className = 'node';
       }
       setGrid(tempGrid);
+      setMouseIsPressed(true);
+    }
+  };
+  const onMouseUp = (row, col) => {
+    tempGrid = grid;
+    if (changingEnd) {
+      setEnd_row(row);
+      setEnd_col(col);
+      tempGrid[row][col].isEnd = true;
+      setChangingEnd(false);
+    }
+    if (changingStart) {
+      setStart_row(row);
+      setStart_col(col);
+      setChangingStart(false);
+      tempGrid[row][col].isStart = true;
+    }
+    setGrid(tempGrid);
+    setMouseIsPressed(false);
+  };
+  const onMouseEnter = (row, col) => {
+    // if ()
+    if (mouseIsPressed) {
+      if (!isWall) {
+        if (changingStart) {
+          document.getElementById(
+            `cell-${grid[row][col].row}-${grid[row][col].col}`
+          ).className = 'node node-start';
+        }
+        if (changingEnd) {
+          document.getElementById(
+            `cell-${grid[row][col].row}-${grid[row][col].col}`
+          ).className = 'node node-end';
+        }
+      } else {
+        tempGrid = grid;
+        tempGrid[row][col].wall = !tempGrid[row][col].wall;
+        if (tempGrid[row][col].wall) {
+          document.getElementById(
+            `cell-${grid[row][col].row}-${grid[row][col].col}`
+          ).className = 'node node-wall';
+        } else {
+          document.getElementById(
+            `cell-${grid[row][col].row}-${grid[row][col].col}`
+          ).className = 'node';
+        }
+        setGrid(tempGrid);
+      }
+    }
+  };
+
+  const onMouseleave = (row, col) => {
+    if (mouseIsPressed) {
+      if (changingStart) {
+        document.getElementById(
+          `cell-${grid[row][col].row}-${grid[row][col].col}`
+        ).className = 'node';
+      }
+      if (changingEnd) {
+        document.getElementById(
+          `cell-${grid[row][col].row}-${grid[row][col].col}`
+        ).className = 'node';
+      }
     }
   };
 
   const handleAlgoChange = (event) => {
     let algo = event.target.value;
     setAlgoSelect(algo);
+  };
+
+  const handleSetWalls = () => {
+    setIsWall(!isWall);
   };
 
   useEffect(() => {
@@ -257,6 +319,7 @@ const PathFind = () => {
                   passonMouseDown={onMouseDown}
                   passonMouseUp={onMouseUp}
                   passonMouseEnter={onMouseEnter}
+                  passonMouseLeave={onMouseleave}
                 />
               );
             })}
@@ -271,6 +334,7 @@ const PathFind = () => {
         <option value='BFS'>BFS</option>
         <option value='Multi-Source-BFS'>Multi Source BFS</option>
       </select>
+      <button onClick={handleSetWalls}>Set Walls</button>
     </div>
   );
 };
