@@ -1,12 +1,12 @@
 import { Heap } from '@datastructures-js/heap';
 
-const compareCars = (a, b) => {
-  return a.startNode.weight - b.startNode.weight >= 0 ? 1 : -1;
-};
 const dijkstra = (startNode) => {
   let found = false;
   let visitedInOrder = []; // store every node in order of their function call
   let path = []; // stores the path to the end node
+  const compareCars = (a, b) => {
+    return a.startNode.weight - b.startNode.weight >= 0 ? 1 : -1;
+  };
   let minHeap = new Heap(compareCars);
   minHeap.insert({
     startNode: startNode,
@@ -34,6 +34,7 @@ const dijkstra = (startNode) => {
       }
     }
   }
+  return { found, visitedInOrder, path };
 };
 
 export default dijkstra;

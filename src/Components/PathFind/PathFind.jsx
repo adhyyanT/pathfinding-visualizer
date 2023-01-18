@@ -99,6 +99,7 @@ const PathFind = () => {
 
   const handleVisualizeAlgo = () => {
     let visitedInOrder, pathFound, path;
+
     switch (algoSelect) {
       case 'DFS':
         let dfsObj;
@@ -164,14 +165,18 @@ const PathFind = () => {
           document.getElementById(
             `cell-${grid[i][j].row}-${grid[i][j].col}`
           ).className = 'node node-start';
+          tempGrid2[i][j].weight = 0;
         } else if (i === end_row && j === end_col) {
           document.getElementById(
             `cell-${grid[i][j].row}-${grid[i][j].col}`
           ).className = 'node node-end';
+          tempGrid2[i][j].isEnd = true;
+          tempGrid2[i][j].weight = Infinity;
         } else {
           document.getElementById(
             `cell-${grid[i][j].row}-${grid[i][j].col}`
           ).className = 'node';
+          tempGrid2[i][j].weight = Infinity;
         }
         tempGrid2[i][j].wall = false;
         tempGrid2[i][j].isVis = false;
@@ -199,6 +204,7 @@ const PathFind = () => {
       }
     } else {
       tempGrid = grid;
+      if (grid[row][col].isStart || grid[row][col].isEnd) return;
       tempGrid[row][col].wall = !tempGrid[row][col].wall;
       if (tempGrid[row][col].wall) {
         document.getElementById(
@@ -246,6 +252,7 @@ const PathFind = () => {
         }
       } else {
         tempGrid = grid;
+        if (grid[row][col].isStart || grid[row][col].isEnd) return;
         tempGrid[row][col].wall = !tempGrid[row][col].wall;
         if (tempGrid[row][col].wall) {
           document.getElementById(
@@ -262,16 +269,19 @@ const PathFind = () => {
   };
 
   const onMouseleave = (row, col) => {
+    tempGrid = grid;
     if (mouseIsPressed) {
       if (changingStart) {
         document.getElementById(
           `cell-${grid[row][col].row}-${grid[row][col].col}`
         ).className = 'node';
+        tempGrid[row][col].isStart = false;
       }
       if (changingEnd) {
         document.getElementById(
           `cell-${grid[row][col].row}-${grid[row][col].col}`
         ).className = 'node';
+        tempGrid[row][col].isEnd = false;
       }
     }
   };

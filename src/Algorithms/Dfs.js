@@ -31,7 +31,6 @@ const dfs = (startNode) => {
     }
   };
   dfsHelper(startNode, currPath);
-  console.log(path);
   return { path, visitedInOrder, found };
 };
 
