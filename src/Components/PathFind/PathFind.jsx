@@ -413,25 +413,14 @@ const PathFind = () => {
                   onChange={handleAlgoChange}
                   fullWidth
                 >
-                  {/* <MenuItem value='none'></MenuItem> */}
                   <MenuItem value='DFS'>DFS</MenuItem>
                   <MenuItem value='BFS'>BFS</MenuItem>
                   <MenuItem value='Multi-Source-BFS'>Multi Source BFS</MenuItem>
                   <MenuItem value='Dijkstra'>Dijkstra</MenuItem>
                 </TextField>
-                {/* <select onChange={handleAlgoChange}>
-                  <option value='none'></option>
-                  <option value='DFS'>DFS</option>
-                  <option value='BFS'>BFS</option>
-                  <option value='Multi-Source-BFS'>Multi Source BFS</option>
-                  <option value='Dijkstra'>Dijkstra</option>
-                </select> */}
               </Box>
             </Grid>
             <Grid item xs={2}>
-              {/* <Button variant='contained' onClick={handleSetWalls}>
-                Set Walls
-              </Button> */}
               <Box color={'white'}>Set Walls</Box>
               <Switch
                 label='Set Walls'
@@ -440,9 +429,6 @@ const PathFind = () => {
               />
             </Grid>
             <Grid item xs={2}>
-              {/* <Button variant='contained' onClick={handleWeights}>
-                Add Weights
-              </Button> */}
               <Box color={'white'}>Add Weights</Box>
               <Switch
                 label='Set Walls'
