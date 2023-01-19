@@ -17,12 +17,10 @@ const dijkstra = (startNode) => {
     for (let i in currNode.neighbours) {
       if (currNode.neighbours[i].isEnd) {
         path = [...currPath, currNode.neighbours[i]];
-        console.log(currNode.weight);
         return { found, visitedInOrder, path };
       }
       if (!currNode.neighbours[i].wall) {
         let t = currNode.dist + currNode.neighbours[i].weight;
-        console.log(t);
         if (t < currNode.neighbours[i].dist) {
           visitedInOrder.push(currNode.neighbours[i]);
           currNode.neighbours[i].dist = t;
