@@ -15,7 +15,7 @@ const multiSrcBfs = (startNode, endNode) => {
     },
   ];
 
-  while (queue.length != 0) {
+  while (queue.length !== 0) {
     let sz = queue.length;
     for (let j = 0; j < sz; j++) {
       let { startNode: currNode, currPath } = queue.shift();

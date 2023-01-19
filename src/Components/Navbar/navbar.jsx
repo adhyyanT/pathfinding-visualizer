@@ -2,7 +2,6 @@ import { Toolbar } from '@mui/material';
 import React from 'react';
 import './NavBar.css';
 import AppBar from '@mui/material/AppBar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 const NavBar = () => {
   return (

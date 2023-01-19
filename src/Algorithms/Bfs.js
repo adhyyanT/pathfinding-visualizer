@@ -8,7 +8,7 @@ const Bfs = (startNode) => {
       currPath: [],
     },
   ];
-  while (queue.length != 0) {
+  while (queue.length !== 0) {
     let { startNode: currNode, currPath } = queue.shift();
     for (let i in currNode.neighbours) {
       if (currNode.neighbours[i].isEnd) {
