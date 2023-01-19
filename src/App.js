@@ -1,12 +1,12 @@
-import './App.css';
 import NavBar from './Components/Navbar/NavBar';
 import PathFind from './Components/PathFind/PathFind';
+import Container from '@mui/material/Container';
 function App() {
   return (
-    <div className='App'>
+    <Container maxWidth={false}>
       <NavBar></NavBar>
       <PathFind></PathFind>
-    </div>
+    </Container>
   );
 }
 

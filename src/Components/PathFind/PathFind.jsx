@@ -1,3 +1,11 @@
+import { Grid } from '@mui/material';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+
 import React, { useEffect, useState } from 'react';
 import './PathFind.css';
 import Node from '../Node/Node';
@@ -5,12 +13,9 @@ import dfs from '../../Algorithms/Dfs';
 import Bfs from '../../Algorithms/Bfs';
 import multiSrcBfs from '../../Algorithms/Multi-src-bfs';
 import dijkstra from '../../Algorithms/Dijkstra';
+
 const rows = 15;
-const cols = 35;
-// const start_row = 10,
-//   start_col = 10,
-//   end_row = 7,
-//   end_col = 24;
+const cols = 55;
 
 const PathFind = () => {
   //Main grid that holds object structure
@@ -358,41 +363,71 @@ const PathFind = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div className='container'>
-      <div>
-        {grid.map((innerArray, index) => (
-          <div key={index} className='grid'>
-            {innerArray.map((item, i2) => {
-              const { isStart, isEnd, row, col } = item;
-              return (
-                <Node
-                  key={i2}
-                  isStart={isStart}
-                  isEnd={isEnd}
-                  row={row}
-                  col={col}
-                  passonMouseDown={onMouseDown}
-                  passonMouseUp={onMouseUp}
-                  passonMouseEnter={onMouseEnter}
-                  passonMouseLeave={onMouseleave}
-                />
-              );
-            })}
-          </div>
-        ))}
-      </div>
-      <button onClick={handleVisualizeAlgo}>Visualize DFS</button>
-      <button onClick={handleReset}> Reset Grid</button>
-      <select onChange={handleAlgoChange}>
-        <option value='none'></option>
-        <option value='DFS'>DFS</option>
-        <option value='BFS'>BFS</option>
-        <option value='Multi-Source-BFS'>Multi Source BFS</option>
-        <option value='Dijkstra'>Dijkstra</option>
-      </select>
-      <button onClick={handleSetWalls}>Set Walls</button>
-      <button onClick={handleWeights}>Add Weights</button>
-    </div>
+    <Box
+      display='flex'
+      justifyContent='center'
+      alignItems='center'
+      minHeight='100vh'
+    >
+      <Container>
+        <Container>
+          {grid.map((innerArray, index) => (
+            <div key={index} className='grid'>
+              {innerArray.map((item, i2) => {
+                const { isStart, isEnd, row, col } = item;
+                return (
+                  <Node
+                    key={i2}
+                    isStart={isStart}
+                    isEnd={isEnd}
+                    row={row}
+                    col={col}
+                    passonMouseDown={onMouseDown}
+                    passonMouseUp={onMouseUp}
+                    passonMouseEnter={onMouseEnter}
+                    passonMouseLeave={onMouseleave}
+                  />
+                );
+              })}
+            </div>
+          ))}
+        </Container>
+        <Container>
+          <Grid container spacing={2}>
+            <Grid item xs={2}>
+              <Button variant='contained' onClick={handleVisualizeAlgo}>
+                Visualize
+              </Button>
+            </Grid>
+            <Grid item xs={2}>
+              <Button variant='contained' onClick={handleReset}>
+                Reset Grid
+              </Button>
+            </Grid>
+            <Grid item xs={2}>
+              <InputLabel id='demo-simple-select-label'>Algo</InputLabel>
+              <select onChange={handleAlgoChange}>
+                <option value='none'></option>
+                <option value='DFS'>DFS</option>
+                <option value='BFS'>BFS</option>
+                <option value='Multi-Source-BFS'>Multi Source BFS</option>
+                <option value='Dijkstra'>Dijkstra</option>
+              </select>
+            </Grid>
+            <Grid item xs={2}>
+              <Button variant='contained' onClick={handleSetWalls}>
+                Set Walls
+              </Button>
+            </Grid>
+            <Grid item xs={2}>
+              <Button variant='contained' onClick={handleWeights}>
+                Add Weights
+              </Button>
+            </Grid>
+          </Grid>
+        </Container>
+      </Container>
+    </Box>
   );
 };
 
